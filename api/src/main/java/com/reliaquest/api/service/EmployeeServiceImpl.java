@@ -54,6 +54,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public List<Employee> getEmployeesByNameSearch(String searchString) {
         logger.info("Searching employees with name: {}", searchString);
+        if (searchString == null) {
+            return Collections.emptyList();
+        }
         return getAllEmployees().stream()
                 .filter(employee -> employee.getName().toLowerCase().contains(searchString.toLowerCase()))
                 .toList();
