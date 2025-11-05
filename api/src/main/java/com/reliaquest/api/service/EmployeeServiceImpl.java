@@ -1,6 +1,7 @@
 package com.reliaquest.api.service;
 
 import com.reliaquest.api.model.ApiResponse;
+import com.reliaquest.api.model.DeleteEmployeeInput;
 import com.reliaquest.api.model.Employee;
 import com.reliaquest.api.model.EmployeeInput;
 import java.util.Collections;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.slf4j.Logger;
@@ -120,12 +122,30 @@ public class EmployeeServiceImpl implements EmployeeService {
     public String deleteEmployeeById(String id) {
         logger.info("Attempting to delete employee with id: {}", id);
         try {
-            String url = mockApiUrl + "/" + id;
-            ResponseEntity<ApiResponse<String>> response =
-                    restTemplate.exchange(url, HttpMethod.DELETE, null, new ParameterizedTypeReference<>() {});
-            String deletedEmployeeName = response.getBody() != null ? response.getBody().getData() : null;
-            logger.info("Successfully deleted employee with id: {}", id);
-            return deletedEmployeeName;
+            Employee employee = getEmployeeById(id);
+            if (employee == null) {
+                logger.warn("No employee found with id: {}", id);
+                return null;
+            }
+
+            DeleteEmployeeInput deleteEmployeeInput = new DeleteEmployeeInput(employee.getName());
+            HttpEntity<DeleteEmployeeInput> httpEntity = new HttpEntity<>(deleteEmployeeInput);
+            ResponseEntity<ApiResponse<Boolean>> response = restTemplate.exchange(
+                    mockApiUrl,
+                    HttpMethod.DELETE,
+                    httpEntity,
+                    new ParameterizedTypeReference<>() {});
+
+            if (response.getBody() != null && response.getBody().getData()) {
+                logger.info("Successfully deleted employee with id: {}", id);
+                return employee.getName();
+            } else {
+                logger.error("Failed to delete employee with id: {}", id);
+                return null;
+            }
+        } catch (HttpClientErrorException.NotFound e) {
+            logger.warn("Employee with id {} not found, cannot delete", id);
+            return null;
         } catch (HttpClientErrorException e) {
             logger.error("Error while deleting employee with id: {}", id, e);
             throw e;
