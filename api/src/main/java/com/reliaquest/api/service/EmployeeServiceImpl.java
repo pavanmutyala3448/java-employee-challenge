@@ -7,13 +7,13 @@ import com.reliaquest.api.model.EmployeeInput;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -42,7 +42,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         try {
             ResponseEntity<ApiResponse<List<Employee>>> response = restTemplate.exchange(
                     mockApiUrl, HttpMethod.GET, null, new ParameterizedTypeReference<ApiResponse<List<Employee>>>() {});
-            List<Employee> employees = Objects.nonNull(response.getBody()) ? response.getBody().getData() : Collections.emptyList();
+            List<Employee> employees =
+                    Objects.nonNull(response.getBody()) ? response.getBody().getData() : Collections.emptyList();
             logger.info("Successfully fetched {} employees", employees.size());
             return employees;
         } catch (HttpClientErrorException e) {
@@ -75,7 +76,8 @@ public class EmployeeServiceImpl implements EmployeeService {
                     HttpMethod.GET,
                     null,
                     new ParameterizedTypeReference<ApiResponse<Employee>>() {});
-            Employee employee = Objects.nonNull(response.getBody()) ? response.getBody().getData() : null;
+            Employee employee =
+                    Objects.nonNull(response.getBody()) ? response.getBody().getData() : null;
             if (employee != null) {
                 logger.info("Successfully fetched employee with id: {}", id);
             } else {
@@ -119,7 +121,8 @@ public class EmployeeServiceImpl implements EmployeeService {
                     HttpMethod.POST,
                     new org.springframework.http.HttpEntity<>(employeeInput),
                     new ParameterizedTypeReference<ApiResponse<Employee>>() {});
-            Employee newEmployee = response.getBody() != null ? response.getBody().getData() : null;
+            Employee newEmployee =
+                    response.getBody() != null ? response.getBody().getData() : null;
             logger.info("Successfully created employee: {}", newEmployee);
             return newEmployee;
         } catch (HttpClientErrorException e) {
@@ -145,10 +148,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             DeleteEmployeeInput deleteEmployeeInput = new DeleteEmployeeInput(employee.getName());
             HttpEntity<DeleteEmployeeInput> httpEntity = new HttpEntity<>(deleteEmployeeInput);
             ResponseEntity<ApiResponse<Boolean>> response = restTemplate.exchange(
-                    mockApiUrl,
-                    HttpMethod.DELETE,
-                    httpEntity,
-                    new ParameterizedTypeReference<>() {});
+                    mockApiUrl, HttpMethod.DELETE, httpEntity, new ParameterizedTypeReference<>() {});
 
             if (response.getBody() != null && response.getBody().getData()) {
                 logger.info("Successfully deleted employee with id: {}", id);

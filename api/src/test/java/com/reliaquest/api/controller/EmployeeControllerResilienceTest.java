@@ -1,7 +1,13 @@
 package com.reliaquest.api.controller;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.reliaquest.api.model.Employee;
+import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,18 +24,10 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
-import java.util.UUID;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -57,8 +55,7 @@ public class EmployeeControllerResilienceTest {
     }
 
     @BeforeAll
-    static void startWireMock() {
-    }
+    static void startWireMock() {}
 
     @AfterAll
     static void stopWireMock() {
@@ -104,10 +101,7 @@ public class EmployeeControllerResilienceTest {
                         .withBody(successResponse)));
 
         ResponseEntity<List<Employee>> response = testRestTemplate.exchange(
-                "/api/v1/employees",
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<>() {});
+                "/api/v1/employees", HttpMethod.GET, null, new ParameterizedTypeReference<>() {});
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());

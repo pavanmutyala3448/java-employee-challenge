@@ -42,8 +42,7 @@ public class EmployeeControllerIntegrationTest {
         employee.setName("John Doe");
         when(employeeService.getAllEmployees()).thenReturn(Collections.singletonList(employee));
 
-        given()
-                .when()
+        given().when()
                 .get("/api/v1/employees")
                 .then()
                 .statusCode(200)
@@ -58,8 +57,7 @@ public class EmployeeControllerIntegrationTest {
         employee.setName("John Doe");
         when(employeeService.getEmployeesByNameSearch("John")).thenReturn(Collections.singletonList(employee));
 
-        given()
-                .when()
+        given().when()
                 .get("/api/v1/employees/search/John")
                 .then()
                 .statusCode(200)
@@ -75,8 +73,7 @@ public class EmployeeControllerIntegrationTest {
         String validUuid = UUID.randomUUID().toString();
         when(employeeService.getEmployeeById(validUuid)).thenReturn(employee);
 
-        given()
-                .when()
+        given().when()
                 .get("/api/v1/employees/" + validUuid)
                 .then()
                 .statusCode(200)
@@ -87,8 +84,7 @@ public class EmployeeControllerIntegrationTest {
     public void getHighestSalaryOfEmployees_shouldReturnHighestSalary() {
         when(employeeService.getHighestSalaryOfEmployees()).thenReturn(100000);
 
-        given()
-                .when()
+        given().when()
                 .get("/api/v1/employees/highestSalary")
                 .then()
                 .statusCode(200)
@@ -97,11 +93,9 @@ public class EmployeeControllerIntegrationTest {
 
     @Test
     public void getTopTenHighestEarningEmployeeNames_shouldReturnNames() {
-        when(employeeService.getTopTenHighestEarningEmployeeNames())
-                .thenReturn(Arrays.asList("John Doe", "Jane Doe"));
+        when(employeeService.getTopTenHighestEarningEmployeeNames()).thenReturn(Arrays.asList("John Doe", "Jane Doe"));
 
-        given()
-                .when()
+        given().when()
                 .get("/api/v1/employees/topTenHighestEarningEmployeeNames")
                 .then()
                 .statusCode(200)
@@ -126,8 +120,7 @@ public class EmployeeControllerIntegrationTest {
 
         when(employeeService.createEmployee(any(EmployeeInput.class))).thenReturn(employee);
 
-        given()
-                .contentType(ContentType.JSON)
+        given().contentType(ContentType.JSON)
                 .body(employeeInput)
                 .when()
                 .post("/api/v1/employees")
@@ -141,8 +134,7 @@ public class EmployeeControllerIntegrationTest {
         String validUuid = UUID.randomUUID().toString();
         when(employeeService.deleteEmployeeById(validUuid)).thenReturn("Successfully! deleted Record");
 
-        given()
-                .when()
+        given().when()
                 .delete("/api/v1/employees/" + validUuid)
                 .then()
                 .statusCode(200)

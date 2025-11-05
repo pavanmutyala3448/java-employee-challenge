@@ -10,7 +10,6 @@ import com.reliaquest.api.service.EmployeeService;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -43,7 +42,8 @@ public class EmployeeControllerTest {
     public void testGetEmployeeById() {
         Employee employee = new Employee();
         employee.setId("1d6f3419-6bc9-4090-9f5c-64328d0dfe5a");
-        when(employeeService.getEmployeeById("1d6f3419-6bc9-4090-9f5c-64328d0dfe5a")).thenReturn(employee);
+        when(employeeService.getEmployeeById("1d6f3419-6bc9-4090-9f5c-64328d0dfe5a"))
+                .thenReturn(employee);
         ResponseEntity<Employee> response = employeeController.getEmployeeById("1d6f3419-6bc9-4090-9f5c-64328d0dfe5a");
         assertEquals(200, response.getStatusCodeValue());
         assertEquals("1d6f3419-6bc9-4090-9f5c-64328d0dfe5a", response.getBody().getId());
@@ -95,7 +95,8 @@ public class EmployeeControllerTest {
 
     @Test
     public void testDeleteEmployee() {
-        when(employeeService.deleteEmployeeById("1d6f3419-6bc9-4090-9f5c-64328d0dfe5a")).thenReturn("Success");
+        when(employeeService.deleteEmployeeById("1d6f3419-6bc9-4090-9f5c-64328d0dfe5a"))
+                .thenReturn("Success");
         ResponseEntity<String> response = employeeController.deleteEmployeeById("1d6f3419-6bc9-4090-9f5c-64328d0dfe5a");
         assertEquals(200, response.getStatusCodeValue());
         assertEquals("Success", response.getBody());
