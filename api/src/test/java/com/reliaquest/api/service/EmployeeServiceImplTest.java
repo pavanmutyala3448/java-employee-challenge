@@ -265,4 +265,39 @@ public class EmployeeServiceImplTest {
             employeeService.deleteEmployeeById("1");
         });
     }
+
+    @Test
+    public void deleteEmployeeById_whenGetReturnsNotFound_shouldReturnNull() {
+        when(restTemplate.exchange(
+                eq(MOCK_API_URL + "/1"), eq(HttpMethod.GET), any(), any(ParameterizedTypeReference.class)))
+                .thenThrow(HttpClientErrorException.create(HttpStatus.NOT_FOUND, "Not Found", null, null, null));
+
+        String result = employeeService.deleteEmployeeById("1");
+        assertNull(result);
+    }
+
+    @Test
+    public void deleteEmployeeById_whenDeleteReturnsFalse_shouldReturnNull() {
+        Employee employee = new Employee();
+        employee.setId("1");
+        employee.setName("Test Employee");
+        ApiResponse<Employee> getApiResponse = new ApiResponse<>();
+        getApiResponse.setData(employee);
+        ResponseEntity<ApiResponse<Employee>> getResponseEntity = ResponseEntity.ok(getApiResponse);
+
+        when(restTemplate.exchange(
+                eq(MOCK_API_URL + "/1"), eq(HttpMethod.GET), any(), any(ParameterizedTypeReference.class)))
+                .thenReturn(getResponseEntity);
+
+        ApiResponse<Boolean> deleteApiResponse = new ApiResponse<>();
+        deleteApiResponse.setData(false);
+        ResponseEntity<ApiResponse<Boolean>> deleteResponseEntity = ResponseEntity.ok(deleteApiResponse);
+
+        when(restTemplate.exchange(
+                eq(MOCK_API_URL), eq(HttpMethod.DELETE), any(), any(ParameterizedTypeReference.class)))
+                .thenReturn(deleteResponseEntity);
+
+        String result = employeeService.deleteEmployeeById("1");
+        assertNull(result);
+    }
 }
