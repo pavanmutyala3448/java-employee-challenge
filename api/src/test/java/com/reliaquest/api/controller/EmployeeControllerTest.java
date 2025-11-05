@@ -39,11 +39,11 @@ public class EmployeeControllerTest {
     @Test
     public void testGetEmployeeById() {
         Employee employee = new Employee();
-        employee.setId("1");
-        when(employeeService.getEmployeeById("1")).thenReturn(employee);
-        ResponseEntity<Employee> response = employeeController.getEmployeeById("1");
+        employee.setId("1d6f3419-6bc9-4090-9f5c-64328d0dfe5a");
+        when(employeeService.getEmployeeById("1d6f3419-6bc9-4090-9f5c-64328d0dfe5a")).thenReturn(employee);
+        ResponseEntity<Employee> response = employeeController.getEmployeeById("1d6f3419-6bc9-4090-9f5c-64328d0dfe5a");
         assertEquals(200, response.getStatusCodeValue());
-        assertEquals("1", response.getBody().getId());
+        assertEquals("1d6f3419-6bc9-4090-9f5c-64328d0dfe5a", response.getBody().getId());
     }
 
     @Test
@@ -81,8 +81,8 @@ public class EmployeeControllerTest {
 
     @Test
     public void testDeleteEmployee() {
-        when(employeeService.deleteEmployeeById("1")).thenReturn("Success");
-        ResponseEntity<String> response = employeeController.deleteEmployeeById("1");
+        when(employeeService.deleteEmployeeById("1d6f3419-6bc9-4090-9f5c-64328d0dfe5a")).thenReturn("Success");
+        ResponseEntity<String> response = employeeController.deleteEmployeeById("1d6f3419-6bc9-4090-9f5c-64328d0dfe5a");
         assertEquals(200, response.getStatusCodeValue());
         assertEquals("Success", response.getBody());
     }

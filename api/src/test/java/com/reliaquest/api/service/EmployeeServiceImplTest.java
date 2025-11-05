@@ -221,23 +221,44 @@ public class EmployeeServiceImplTest {
 
     @Test
     public void testDeleteEmployeeById() {
-        ApiResponse<String> apiResponse = new ApiResponse<>();
-        apiResponse.setStatus("success");
-        apiResponse.setData("Successfully! Record has been deleted");
-        ResponseEntity<ApiResponse<String>> responseEntity = ResponseEntity.ok(apiResponse);
+        Employee employee = new Employee();
+        employee.setId("1");
+        employee.setName("Test Employee");
+        ApiResponse<Employee> getApiResponse = new ApiResponse<>();
+        getApiResponse.setData(employee);
+        ResponseEntity<ApiResponse<Employee>> getResponseEntity = ResponseEntity.ok(getApiResponse);
 
         when(restTemplate.exchange(
-                        eq(MOCK_API_URL + "/1"), eq(HttpMethod.DELETE), any(), any(ParameterizedTypeReference.class)))
-                .thenReturn(responseEntity);
+                eq(MOCK_API_URL + "/1"), eq(HttpMethod.GET), any(), any(ParameterizedTypeReference.class)))
+                .thenReturn(getResponseEntity);
+
+        ApiResponse<Boolean> deleteApiResponse = new ApiResponse<>();
+        deleteApiResponse.setData(true);
+        ResponseEntity<ApiResponse<Boolean>> deleteResponseEntity = ResponseEntity.ok(deleteApiResponse);
+
+        when(restTemplate.exchange(
+                eq(MOCK_API_URL), eq(HttpMethod.DELETE), any(), any(ParameterizedTypeReference.class)))
+                .thenReturn(deleteResponseEntity);
 
         String result = employeeService.deleteEmployeeById("1");
-        assertEquals("Successfully! Record has been deleted", result);
+        assertEquals("Test Employee", result);
     }
 
     @Test
     public void deleteEmployeeById_whenApiFails_shouldThrowException() {
+        Employee employee = new Employee();
+        employee.setId("1");
+        employee.setName("Test Employee");
+        ApiResponse<Employee> getApiResponse = new ApiResponse<>();
+        getApiResponse.setData(employee);
+        ResponseEntity<ApiResponse<Employee>> getResponseEntity = ResponseEntity.ok(getApiResponse);
+
         when(restTemplate.exchange(
-                        eq(MOCK_API_URL + "/1"), eq(HttpMethod.DELETE), any(), any(ParameterizedTypeReference.class)))
+                eq(MOCK_API_URL + "/1"), eq(HttpMethod.GET), any(), any(ParameterizedTypeReference.class)))
+                .thenReturn(getResponseEntity);
+
+        when(restTemplate.exchange(
+                eq(MOCK_API_URL), eq(HttpMethod.DELETE), any(), any(ParameterizedTypeReference.class)))
                 .thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
 
         assertThrows(HttpClientErrorException.class, () -> {
