@@ -18,6 +18,7 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -32,7 +33,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    @Retryable(value = HttpClientErrorException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000))
+    @Retryable(
+            value = {HttpClientErrorException.TooManyRequests.class, HttpServerErrorException.ServiceUnavailable.class},
+            maxAttemptsExpression = "${retry.maxAttempts}",
+            backoff = @Backoff(delayExpression = "${retry.delay}", multiplier = 2, random = true))
     public List<Employee> getAllEmployees() {
         logger.info("Attempting to fetch all employees");
         try {
@@ -56,7 +60,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    @Retryable(value = HttpClientErrorException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000))
+    @Retryable(
+            value = {HttpClientErrorException.TooManyRequests.class, HttpServerErrorException.ServiceUnavailable.class},
+            maxAttemptsExpression = "${retry.maxAttempts}",
+            backoff = @Backoff(delayExpression = "${retry.delay}", multiplier = 2, random = true))
     public Employee getEmployeeById(String id) {
         logger.info("Attempting to fetch employee with id: {}", id);
         try {
@@ -119,6 +126,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    @Retryable(
+            value = {HttpClientErrorException.TooManyRequests.class, HttpServerErrorException.ServiceUnavailable.class},
+            maxAttemptsExpression = "${retry.maxAttempts}",
+            backoff = @Backoff(delayExpression = "${retry.delay}", multiplier = 2, random = true))
     public String deleteEmployeeById(String id) {
         logger.info("Attempting to delete employee with id: {}", id);
         try {

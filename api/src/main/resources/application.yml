@@ -3,3 +3,6 @@ server.port: 8111
 mock:
   api:
     url: http://localhost:8112/api/v1/employee
+retry:
+  maxAttempts: 5
+  delay: 60000
