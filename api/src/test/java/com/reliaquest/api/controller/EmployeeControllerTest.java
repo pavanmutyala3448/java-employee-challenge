@@ -1,6 +1,7 @@
 package com.reliaquest.api.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
 import com.reliaquest.api.model.Employee;
@@ -8,6 +9,8 @@ import com.reliaquest.api.model.EmployeeInput;
 import com.reliaquest.api.service.EmployeeService;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -44,6 +47,17 @@ public class EmployeeControllerTest {
         ResponseEntity<Employee> response = employeeController.getEmployeeById("1d6f3419-6bc9-4090-9f5c-64328d0dfe5a");
         assertEquals(200, response.getStatusCodeValue());
         assertEquals("1d6f3419-6bc9-4090-9f5c-64328d0dfe5a", response.getBody().getId());
+    }
+
+    @Test
+    public void getEmployeeById_whenEmployeeNotFound_shouldReturnNotFound() {
+        String validUuid = UUID.randomUUID().toString();
+        when(employeeService.getEmployeeById(validUuid)).thenReturn(null);
+
+        ResponseEntity<Employee> response = employeeController.getEmployeeById(validUuid);
+
+        assertEquals(404, response.getStatusCodeValue());
+        assertNull(response.getBody());
     }
 
     @Test
@@ -85,5 +99,16 @@ public class EmployeeControllerTest {
         ResponseEntity<String> response = employeeController.deleteEmployeeById("1d6f3419-6bc9-4090-9f5c-64328d0dfe5a");
         assertEquals(200, response.getStatusCodeValue());
         assertEquals("Success", response.getBody());
+    }
+
+    @Test
+    public void deleteEmployeeById_whenEmployeeNotFound_shouldReturnNotFound() {
+        String validUuid = UUID.randomUUID().toString();
+        when(employeeService.deleteEmployeeById(validUuid)).thenReturn(null);
+
+        ResponseEntity<String> response = employeeController.deleteEmployeeById(validUuid);
+
+        assertEquals(404, response.getStatusCodeValue());
+        assertNull(response.getBody());
     }
 }
