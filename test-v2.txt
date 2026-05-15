@@ -1,0 +1,1 @@
+testing subscribe functionality to display email details
